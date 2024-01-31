@@ -72,7 +72,7 @@ const MovieDetail = ({
   useEffect(() => {
     const onEscapeKey = (e: KeyboardEvent) => {
       if (e.code === "Escape") onBackBtn();
-      console.log(e.code);
+      // console.log(e.code);
     };
     document.addEventListener("keydown", onEscapeKey);
 

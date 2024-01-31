@@ -108,6 +108,7 @@ function App() {
     } catch (error: unknown) {
       if ((error as Error).name !== "AbortError")
         setError((error as Error).message);
+      setMovies([]);
     } finally {
       setLoading(false);
     }
