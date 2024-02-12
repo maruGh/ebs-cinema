@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { apiKey, movieType, watchDataType } from "../types";
 import Message from "./Message";
 import StarRating from "./StarRating";
+import useKey from "../hooks/useKey";
 
 type SelectedMovieProps = {
   selectedId: string;
@@ -21,7 +22,13 @@ const MovieDetail = ({
   const [error, setError] = useState("");
   const [rating, setRating] = useState<number>(0);
 
+  const countRate = useRef(0);
+
   const isRated = watchedMovies.find((movie) => movie.imdbID === selectedId);
+
+  useEffect(() => {
+    if (rating) countRate.current++;
+  }, [rating]);
 
   const handleAdd = () => {
     const newWatchMovie = {
@@ -32,8 +39,10 @@ const MovieDetail = ({
       Runtime: movie?.Runtime?.split(" ")[0],
       imdbRating: movie?.imdbRating,
       userRating: rating,
+      ratingDecision: countRate.current,
     };
     onAddRating(newWatchMovie);
+    console.log(countRate.current);
   };
 
   const fetchMovieDetail = async () => {
@@ -69,17 +78,7 @@ const MovieDetail = ({
     };
   }, [movie]);
 
-  useEffect(() => {
-    const onEscapeKey = (e: KeyboardEvent) => {
-      if (e.code === "Escape") onBackBtn();
-      // console.log(e.code);
-    };
-    document.addEventListener("keydown", onEscapeKey);
-
-    return () => {
-      document.removeEventListener("keydown", onEscapeKey);
-    };
-  }, [onBackBtn]);
+  useKey("Escape", onBackBtn);
 
   return (
     <div className="">
@@ -111,7 +110,7 @@ const MovieDetail = ({
               <div>
                 You rated this movie by{" : "}
                 <span className="font-mono font-bold text-yellow-500 ">
-                  {isRated.userRating}-🌟
+                  {isRated.userRating} 🌟
                 </span>
               </div>
             ) : (
